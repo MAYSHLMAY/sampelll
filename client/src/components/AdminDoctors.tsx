@@ -189,7 +189,7 @@ const AdminDoctors: React.FC = () => {
               </table>
             </div>
           ) : (
-            <Empty message="No doctors found." />
+            <Empty message="No appointments found." />
           )}
         </section>
       )}

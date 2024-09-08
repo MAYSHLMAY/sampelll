@@ -1,24 +1,18 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
 const auth = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  
-  // Log the received token for debugging purposes
-  console.log("Token received:", req.headers.authorization);
-
-  if (!token) {
-    return res.status(401).json({ error: "No token provided" });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: "Forbidden" });
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const verifyToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    if (!verifyToken) {
+      return res.status(401).send("Token error");
     }
-    req.user = user;
+    req.user = verifyToken; // Store the entire token data in req.user
     next();
-  });
+  } catch (error) {
+    console.log(error);
+    return res.status(401).send("Authentication error");
+  }
 };
 
 module.exports = auth;

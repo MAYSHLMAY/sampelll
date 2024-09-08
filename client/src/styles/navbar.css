@@ -2,72 +2,62 @@ header {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Ensures horizontal alignment */
+  gap: 2rem;
+  align-items: center;
+  /* padding: 10px 10%; */
+  /* height: 72px; */
   position: sticky;
-  top: 0;
-  left: 0;
+  top: 0%;
+  left: 0%;
   background-color: var(--light-blue);
   z-index: 2;
   box-shadow: 0 0 20px 0 rgba(144, 174, 205, 0.339);
-  padding: 0 2rem; /* Added padding */
-  height: 72px; /* Ensures consistent height */
+  transition: all 0.2 linear;
 }
 
 nav {
-  display: flex;
-  align-items: center; /* Aligns items horizontally */
-  justify-content: space-between;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  align-items: center;
 }
 
-.nav-logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.nav-logo a {
+.nav-logo a,
+.nav-links a {
   color: var(--bold-text-color);
-  text-decoration: none; /* No underline for company name */
 }
 
 .nav-links {
   display: flex;
   gap: 2rem;
-  align-items: center; /* Ensures the links are vertically centered */
-}
-
-.nav-links a {
-  color: var(--bold-text-color);
-  text-decoration: none;
-  position: relative; /* For the underline hover effect */
-}
-
-.nav-links a:hover::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  background-color: blue; /* Underline color */
-  left: 0;
-  bottom: -4px;
-  transition: width 0.3s;
-}
-
-.nav-links a:hover::after {
-  width: 100%;
 }
 
 .nav-links .btn {
   color: var(--white);
   font-size: 0.8rem;
   padding: 0.4rem 0.8rem;
-  cursor: pointer; /* Adds pointer cursor */
 }
 
 .menu-icons {
   display: none;
   z-index: 100;
   font-size: 1.5rem;
+  position: relative;
+}
+
+.menu-open,
+.menu-close {
+  position: absolute;
+  color: var(--black);
+  cursor: pointer;
+}
+
+@media (max-width: 1300px) {
+  nav {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 
 @media (max-width: 950px) {
@@ -87,115 +77,14 @@ nav {
     gap: 3rem;
     transition: all 0.3s linear;
   }
-
   .nav-active .nav-links {
     transform: translateX(0%);
     visibility: visible;
   }
-
   .menu-icons {
     display: block;
     position: absolute;
     top: 33%;
     right: 7%;
-  }
-}
-
-/* Profile Menu Dropdown */
-.profile-menu {
-  position: relative;
-}
-
-.profile-header {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.profile-pic1 {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-
-.profile-header span {
-  font-size: 0.9rem;
-  color: var(--bold-text-color);
-  position: relative;
-}
-
-.profile-header .dropdown-icon {
-  margin-left: 5px;
-  font-size: 0.9rem;
-  color: var(--bold-text-color);
-}
-
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: var(--light-blue);
-  border: 1px solid var(--bold-text-color);
-  border-radius: 4px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 200px;
-  z-index: 30;
-}
-
-.dropdown-menu li {
-  list-style: none;
-}
-
-.dropdown-menu a,
-.dropdown-menu span {
-  display: block;
-  padding: 10px;
-  color: var(--bold-text-color);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.dropdown-menu a:hover,
-.dropdown-menu span:hover {
-  background-color: var(--darker-blue);
-  color: var(--white);
-}
-
-.profile-menu:hover .dropdown-menu {
-  display: block;
-}
-
-/* Hover underline animation */
-.nav-links a:hover::after {
-  width: 100%;
-  transition: width 0.3s;
-}
-
-/* Profile Dropdown Hover Animation */
-.dropdown-menu a:hover::after,
-.dropdown-menu span:hover::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  background-color: var(--darker-blue);
-  transition: width 0.3s ease;
-}
-
-.dropdown-menu a:hover::after,
-.dropdown-menu span:hover::after {
-  width: 100%;
-}
-
-/* Apply profile-header padding and margin for smaller screens where hamburger shows */
-@media (max-width: 950px) {
-  .profile-header {
-    padding: 56px;
-    margin-bottom: 2px;
   }
 }

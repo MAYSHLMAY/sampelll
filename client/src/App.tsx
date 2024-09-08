@@ -10,8 +10,6 @@ import { Protected, Public, Admin } from "./middleware/route";
 import { lazy, Suspense } from "react";
 import Loading from "./components/Loading";
 import Dashboard from "./pages/Dashboard";
-import Chatbot from "./components/Chatbot";
-import PrivateRoute from "./components/PrivateRoute";
 
 const Aprofile = lazy(() => import("./components/Aprofile"));
 const Home = lazy(() => import("./pages/Home"));
@@ -38,9 +36,9 @@ const App: React.FC = () => {
           <Route
             path="/register"
             element={
-             
+              <Public>
                 <Register />
-             
+              </Public>
             }
           />
           <Route path="/" element={<Home />} />
@@ -97,7 +95,7 @@ const App: React.FC = () => {
             path="/dashboard/users"
             element={
               <Admin>
-                <Dashboard type={"patients"} />
+                <Dashboard type={"users"} />
               </Admin>
             }
           />
@@ -146,7 +144,6 @@ const App: React.FC = () => {
           <Route path="*" element={<Error />} />
         </Routes>
       </Suspense>
-      <Chatbot/>
     </Router>
   );
 };
