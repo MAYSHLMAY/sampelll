@@ -4,12 +4,12 @@ const schema = mongoose.Schema(
   {
     userId: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: "User",
+      ref: "User",  // Ensure this matches your User model
       required: true,
     },
     doctorId: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: "User",
+      ref: "Doctor",  // Update this to "Doctor" if you have a Doctor model
       required: true,
     },
     date: {

@@ -25,3 +25,5 @@ appointRouter.get('/count/total', countAllAppointments);
 appointRouter.get('/count/completed', countCompletedAppointments);
 
 module.exports = appointRouter;
+
+
