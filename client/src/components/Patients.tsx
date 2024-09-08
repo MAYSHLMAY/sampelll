@@ -6,55 +6,46 @@ import { setLoading } from "../redux/reducers/rootSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Empty from "./Empty";
 import fetchData from "../helper/apiCall";
-import "../styles/user.css";
+import { RootState } from "../redux/store";
 
-// Define TypeScript interfaces for doctor and state
+// Define the type for the user data
 interface User {
   _id: string;
+  pic: string;
   firstname: string;
   lastname: string;
   email: string;
   mobile: string;
-  pic: string;
+  age: number;
+  gender: string;
+  role: string; // Added role field
 }
 
-interface Doctor {
-  _id: string;
-  userId: User;
-  experience: string;
-  specialization: string;
-  fees: string;
-}
-
-interface RootState {
-  root: {
-    loading: boolean;
-  };
-}
-
-const AdminDoctors: React.FC = () => {
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [filter, setFilter] = useState<string>("all");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
+const Patients: React.FC = () => {
+  const [patients, setPatients] = useState<User[]>([]);
   const dispatch = useDispatch();
+  const [filter, setFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const { loading } = useSelector((state: RootState) => state.root);
 
-  const getAllDoctors = async () => {
+  // Fetch all patients
+  const getAllPatients = async () => {
     try {
       dispatch(setLoading(true));
-      let url = "api/doctor/getalldoctors";
+      let url = "/api/user/getallusers";
       if (filter !== "all") {
         url += `?filter=${filter}`;
       }
       if (searchTerm.trim() !== "") {
         url += `${filter !== "all" ? "&" : "?"}search=${searchTerm}`;
       }
-      const temp: Doctor[] = await fetchData(url);
-      setDoctors(temp);
+      const allUsers: User[] = await fetchData(url);
+      // Filter patients based on their role
+      const patientsOnly = allUsers.filter(user => user.role === "Patient");
+      setPatients(patientsOnly);
       dispatch(setLoading(false));
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching patients:", error);
       dispatch(setLoading(false));
     }
   };
@@ -64,44 +55,35 @@ const AdminDoctors: React.FC = () => {
       const confirm = window.confirm("Are you sure you want to delete?");
       if (confirm) {
         await toast.promise(
-          axios.put(
-            "/api/doctor/deletedoctor",
-            { userId },
-            {
-              headers: {
-                authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          ),
+          axios.delete("/api/user/deleteuser", {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            data: { userId },
+          }),
           {
-            success: "Doctor deleted successfully",
-            error: "Unable to delete Doctor",
-            loading: "Deleting Doctor...",
+            loading: "Deleting user...",
+            success: "User deleted successfully",
+            error: "Unable to delete user",
           }
         );
-        getAllDoctors();
+        getAllPatients();
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error deleting user:", error);
     }
   };
 
   useEffect(() => {
-    getAllDoctors();
-  }, []);
+    getAllPatients();
+  }, [filter, searchTerm]);
 
-  const filteredDoctors = doctors.filter((doc) => {
+  // Filter patients based on the filter and search term
+  const filteredPatients = patients.filter((patient) => {
     if (filter === "all") {
       return true;
-    } else if (filter === "specialization") {
-      return doc.specialization
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
     } else if (filter === "firstname") {
-      return (
-        doc.userId &&
-        doc.userId.firstname.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      return patient.firstname.toLowerCase().includes(searchTerm.toLowerCase());
     } else {
       return true;
     }
@@ -123,7 +105,6 @@ const AdminDoctors: React.FC = () => {
               >
                 <option value="all">All</option>
                 <option value="firstname">Name</option>
-                <option value="specialization">Specialization</option>
               </select>
             </div>
 
@@ -139,8 +120,8 @@ const AdminDoctors: React.FC = () => {
               />
             </div>
           </div>
-          <h3 className="home-sub-heading">All Doctors</h3>
-          {filteredDoctors.length > 0 ? (
+          <h3 className="home-sub-heading">Patients</h3>
+          {patients.length > 0 ? (
             <div className="user-container">
               <table>
                 <thead>
@@ -151,34 +132,32 @@ const AdminDoctors: React.FC = () => {
                     <th>Last Name</th>
                     <th>Email</th>
                     <th>Mobile No.</th>
-                    <th>Experience</th>
-                    <th>Specialization</th>
-                    <th>Fees</th>
+                    <th>Age</th>
+                    <th>Gender</th>
                     <th>Remove</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredDoctors.map((ele, i) => (
+                  {filteredPatients.map((ele, i) => (
                     <tr key={ele._id}>
                       <td>{i + 1}</td>
                       <td>
                         <img
                           className="user-table-pic"
-                          src={ele.userId.pic}
-                          alt={ele.userId.firstname}
+                          src={ele.pic}
+                          alt={ele.firstname}
                         />
                       </td>
-                      <td>{ele.userId.firstname}</td>
-                      <td>{ele.userId.lastname}</td>
-                      <td>{ele.userId.email}</td>
-                      <td>{ele.userId.mobile}</td>
-                      <td>{ele.experience}</td>
-                      <td>{ele.specialization}</td>
-                      <td>{ele.fees}</td>
+                      <td>{ele.firstname}</td>
+                      <td>{ele.lastname}</td>
+                      <td>{ele.email}</td>
+                      <td>{ele.mobile}</td>
+                      <td>{ele.age}</td>
+                      <td>{ele.gender}</td>
                       <td className="select">
                         <button
                           className="btn user-btn"
-                          onClick={() => deleteUser(ele.userId._id)}
+                          onClick={() => deleteUser(ele._id)}
                         >
                           Remove
                         </button>
@@ -189,7 +168,7 @@ const AdminDoctors: React.FC = () => {
               </table>
             </div>
           ) : (
-            <Empty message="No doctors found." />
+            <Empty message="No patients found." />
           )}
         </section>
       )}
@@ -197,4 +176,4 @@ const AdminDoctors: React.FC = () => {
   );
 };
 
-export default AdminDoctors;
+export default Patients;
